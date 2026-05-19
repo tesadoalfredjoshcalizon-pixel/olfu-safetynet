@@ -1,0 +1,10 @@
+{
+  "name": "SOFE312 OLFU SafetyNet",
+  "description": "Workforce deployment and safety monitoring system for Our Lady of Fatima University (Valenzuela Campus) General Services. Features real-time protection, hazard identification, and risk assessment.",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

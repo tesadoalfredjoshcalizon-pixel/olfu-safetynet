@@ -1,0 +1,106 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "System user with role and authentication info",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "username": { "type": "string" },
+        "name": { "type": "string" },
+        "role": { "type": "string", "enum": ["Admin", "SafetyOfficer", "Supervisor", "Staff"] },
+        "avatar": { "type": "string" },
+        "workerId": { "type": "string" }
+      },
+      "required": ["id", "username", "name", "role"]
+    },
+    "Worker": {
+      "title": "Worker",
+      "description": "Worker profile with real-time vitals and safety status",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "role": { "type": "string" },
+        "skillLevel": { "type": "string" },
+        "certifications": { "type": "array", "items": { "type": "string" } },
+        "productivityScore": { "type": "number" },
+        "fatigueLevel": { "type": "number" },
+        "lastIncidentDate": { "type": "string" },
+        "currentLocation": { "type": "string" },
+        "assignedTime": { "type": "string" },
+        "vitals": {
+          "type": "object",
+          "properties": {
+            "heartRate": { "type": "number" },
+            "bodyTemp": { "type": "number" },
+            "oxygenLevel": { "type": "number" }
+          }
+        },
+        "ppeCompliant": { "type": "boolean" },
+        "status": { "type": "string" },
+        "safetyStatus": { "type": "string" },
+        "assignedShiftId": { "type": "string" }
+      },
+      "required": ["id", "name", "role", "skillLevel", "vitals", "status", "safetyStatus"]
+    },
+    "Incident": {
+      "title": "Incident",
+      "description": "Safety incident or protocol violation record",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "date": { "type": "string" },
+        "type": { "type": "string" },
+        "severity": { "type": "string" },
+        "description": { "type": "string" },
+        "location": { "type": "string" }
+      },
+      "required": ["id", "date", "type", "severity", "description", "location"]
+    },
+    "ShiftReport": {
+      "title": "ShiftReport",
+      "description": "End-of-shift report for a worker",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "workerId": { "type": "string" },
+        "workerName": { "type": "string" },
+        "workerRole": { "type": "string" },
+        "date": { "type": "string" },
+        "time": { "type": "string" },
+        "shiftName": { "type": "string" },
+        "location": { "type": "string" },
+        "finalVitals": {
+          "type": "object",
+          "properties": {
+            "hr": { "type": "number" },
+            "temp": { "type": "number" }
+          }
+        },
+        "aiSummary": { "type": "string" },
+        "performanceRating": { "type": "string" },
+        "completionPhoto": { "type": "string" }
+      },
+      "required": ["id", "workerId", "workerName", "date", "time", "shiftName", "location", "finalVitals"]
+    }
+  },
+  "firestore": {
+    "users": {
+      "schema": "User",
+      "description": "Collection of system users"
+    },
+    "workers": {
+      "schema": "Worker",
+      "description": "Collection of worker profiles"
+    },
+    "incidents": {
+      "schema": "Incident",
+      "description": "Collection of safety incidents"
+    },
+    "shift_reports": {
+      "schema": "ShiftReport",
+      "description": "Collection of shift reports"
+    }
+  }
+}

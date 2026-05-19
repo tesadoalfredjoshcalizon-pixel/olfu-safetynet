@@ -1,0 +1,25 @@
+
+{
+  "short_name": "SafetyNet",
+  "name": "OLFU SafetyNet Operational System",
+  "description": "Workforce deployment and safety monitoring system for OLFU Valenzuela Campus.",
+  "icons": [
+    {
+      "src": "logo.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "logo.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#15803d",
+  "background_color": "#f8fafc"
+}

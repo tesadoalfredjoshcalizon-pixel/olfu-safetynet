@@ -1,0 +1,99 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 0. Default Deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- Global Helpers ---
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isEmailVerified() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function hasRole(role) {
+      return isSignedIn() && getUserData().role == role;
+    }
+
+    function isAdmin() {
+      return (isSignedIn() && request.auth.token.email == 'tesadoalfredjoshcalizon@gmail.com') ||
+             (isSignedIn() && exists(/databases/$(database)/documents/users/$(request.auth.uid)) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'Admin');
+    }
+
+    function isSafetyOfficer() {
+      return isSignedIn() && exists(/databases/$(database)/documents/users/$(request.auth.uid)) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'SafetyOfficer';
+    }
+
+    function isSupervisor() {
+      return isSignedIn() && exists(/databases/$(database)/documents/users/$(request.auth.uid)) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'Supervisor';
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128;
+    }
+
+    // --- Entity Validations ---
+
+    function isValidUser(data) {
+      return data.keys().hasAll(['id', 'username', 'name', 'role']) &&
+             data.keys().size() <= 8 &&
+             data.id is string &&
+             data.role in ['Admin', 'SafetyOfficer', 'Supervisor', 'Staff'];
+    }
+
+    function isValidWorker(data) {
+      return data.keys().hasAll(['id', 'name', 'role', 'skillLevel', 'vitals', 'status', 'safetyStatus']) &&
+             data.keys().size() <= 25 &&
+             data.id is string &&
+             data.name is string &&
+             data.vitals is map;
+    }
+
+    function isValidIncident(data) {
+      return data.keys().hasAll(['id', 'date', 'type', 'severity', 'description', 'location']) &&
+             data.keys().size() <= 12 &&
+             data.id is string;
+    }
+
+    function isValidShiftReport(data) {
+      return data.keys().hasAll(['id', 'workerId', 'workerName', 'date', 'time', 'shiftName', 'location', 'finalVitals']) &&
+             data.keys().size() <= 20 &&
+             data.id is string &&
+             data.workerId is string;
+    }
+
+    // --- Collection Routes ---
+
+    match /users/{userId} {
+      allow read, create, update: if true; 
+      allow delete: if isSignedIn(); // Basic protection for deletion
+    }
+
+    match /workers/{workerId} {
+      allow read, create, update: if true;
+      allow delete: if isSignedIn();
+    }
+
+    match /incidents/{incidentId} {
+      allow read, create, update: if true;
+      allow delete: if isSignedIn();
+    }
+
+    match /shift_reports/{reportId} {
+      allow read, create, update: if true;
+      allow delete: if isSignedIn();
+    }
+  }
+}
